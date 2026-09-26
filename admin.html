@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090511">
+<title>BOWOX STORE — Admin Panel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root{--purple:#9b5cff;--purple2:#c084fc;--text:#f8f5ff;--shadow:0 25px 80px rgba(0,0,0,.42)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Inter,Arial,sans-serif;color:var(--text);min-height:100vh;background:
+  radial-gradient(circle at 10% 5%,rgba(139,92,246,.20),transparent 28%),
+  radial-gradient(circle at 90% 12%,rgba(192,132,252,.14),transparent 25%),
+  linear-gradient(145deg,#030207,#090510 48%,#030207)}
+a{text-decoration:none;color:inherit}
+button{font:inherit}
+.glass{position:relative;overflow:hidden;background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.11);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),var(--shadow);backdrop-filter:blur(24px) saturate(150%);-webkit-backdrop-filter:blur(24px) saturate(150%)}
+.glass:before{content:"";position:absolute;inset:-40% -20%;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.07) 50%,transparent 65%);background-size:220% 220%;animation:glassSheen 9s ease-in-out infinite;pointer-events:none}
+@keyframes glassSheen{0%,100%{background-position:0% 0%}50%{background-position:100% 100%}}
+.container{width:min(1180px,92%);margin:auto}
+.nav{position:sticky;top:0;z-index:1000;height:72px;background:linear-gradient(120deg,#050308,#1b0f30,#3a1670,#1b0f30,#050308);background-size:300% 300%;animation:liquidNav 14s ease-in-out infinite;border-bottom:1px solid rgba(255,255,255,.08);backdrop-filter:blur(26px) saturate(150%);-webkit-backdrop-filter:blur(26px) saturate(150%)}
+@keyframes liquidNav{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.nav-inner{height:100%;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:900;letter-spacing:.8px}
+.brand span{color:#c084fc}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:100px;color:#d8b4fe;background:rgba(255,255,255,.045);border:1px solid rgba(192,132,252,.2);font-size:10px;font-weight:800;letter-spacing:2px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 14px #4ade80;animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.35;transform:scale(.65)}}
+.hero-pad{padding:55px 0 35px}
+.eyebrow{color:#a855f7;font-size:9px;letter-spacing:3px;font-weight:900}
+h1{margin-top:8px;font-size:38px;font-weight:900;letter-spacing:-1px}
+.gradient{background:linear-gradient(90deg,#7c3aed,#c084fc,#f0abfc);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{margin-top:8px;color:#796f82;font-size:11px;line-height:1.7}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:30px 0}
+.stat{padding:20px 16px;border-radius:20px;text-align:center}
+.stat-number{font-size:24px;font-weight:900}
+.stat-label{margin-top:7px;color:#74697c;font-size:9px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase}
+.tabs{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:11px 18px;border-radius:100px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.045);color:#aaa0b5;font-size:10px;font-weight:800;cursor:pointer;transition:.25s}
+.tab.active{color:#fff;border-color:#a855f7;background:linear-gradient(135deg,rgba(155,92,255,.35),rgba(100,37,199,.35))}
+.panel{padding:23px;border-radius:22px;margin-bottom:20px}
+.panel-title{font-size:14px;font-weight:800;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+.order-item{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:16px;border-radius:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);margin-bottom:10px}
+.oi-main b{font-size:12px;display:block}
+.oi-main span{color:#82778b;font-size:10px;line-height:1.7}
+.badge{padding:6px 11px;border-radius:100px;font-size:8px;font-weight:900;letter-spacing:1px}
+.badge.wait{color:#fde68a;background:rgba(253,230,138,.08);border:1px solid rgba(253,230,138,.2)}
+.badge.acc{color:#a7f3d0;background:rgba(167,243,208,.08);border:1px solid rgba(167,243,208,.25)}
+.badge.tolak{color:#fda4af;background:rgba(253,164,175,.08);border:1px solid rgba(253,164,175,.25)}
+.btn{padding:9px 13px;border-radius:10px;font-size:9px;font-weight:900;cursor:pointer;border:1px solid rgba(255,255,255,.12);color:#fff;background:linear-gradient(135deg,#9333ea,#6425c7);transition:.25s}
+.btn:hover{transform:translateY(-2px)}
+.btn.green{background:linear-gradient(135deg,#059669,#047857)}
+.btn.red{background:linear-gradient(135deg,#e11d48,#9f1239)}
+.btn.ghost{background:rgba(255,255,255,.05);color:#dbc9e8}
+.empty{padding:35px;text-align:center;color:#645b6d;font-size:11px;border:1px dashed rgba(255,255,255,.12);border-radius:16px}
+.field{margin-bottom:12px}
+.field label{display:block;color:#92879f;font-size:9px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px}
+.field input{width:100%;padding:12px 13px;border-radius:11px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.25);color:#f8f5ff;font:inherit;font-size:12px;outline:none}
+.field input:focus{border-color:#a855f7}
+.modal-bg{position:fixed;inset:0;z-index:2500;display:none;align-items:center;justify-content:center;background:rgba(3,2,7,.8);backdrop-filter:blur(10px);padding:18px}
+.modal-bg.show{display:flex}
+.modal{width:min(460px,100%);padding:26px;border-radius:22px;background:linear-gradient(150deg,#17101f,#0c0714);border:1px solid rgba(192,132,252,.22);box-shadow:0 30px 90px rgba(0,0,0,.6);max-height:88vh;overflow:auto}
+.modal h3{font-size:16px;font-weight:900;margin-bottom:6px}
+.modal p{color:#82778b;font-size:11px;line-height:1.7;margin-bottom:16px}
+.modal .btn{width:100%;margin-top:6px}
+.modal img{width:100%;border-radius:14px;border:1px solid rgba(255,255,255,.12);margin-bottom:14px}
+.linkish{display:block;text-align:center;margin-top:12px;color:#645b6d;font-size:9px;cursor:pointer}
+.linkish:hover{color:#c084fc}
+#toast{position:fixed;z-index:3000;left:50%;bottom:25px;transform:translate(-50%,25px);opacity:0;pointer-events:none;padding:13px 16px;text-align:center;color:#eee4f4;background:rgba(20,12,28,.78);border:1px solid rgba(192,132,252,.24);border-radius:13px;font-size:10px;transition:.3s}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+footer{padding:35px 20px;text-align:center;color:#5c5363;border-top:1px solid rgba(255,255,255,.06);font-size:9px;margin-top:60px}
+.authtabs{display:flex;gap:8px;margin:18px 0 16px}
+.authtab{flex:1;padding:11px;border-radius:11px;border:1px solid rgba(255,255,255,.11);background:rgba(255,255,255,.045);color:#aaa0b5;font-size:10px;font-weight:800;letter-spacing:1px;cursor:pointer;transition:.25s}
+.authtab.active{color:#fff;border-color:#a855f7;background:linear-gradient(135deg,rgba(155,92,255,.35),rgba(100,37,199,.35))}
+@media(max-width:850px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+<div class="container nav-inner">
+    <a href="#" class="brand">
+        <svg width="38" height="38" viewBox="0 0 64 64" fill="none">
+            <defs><linearGradient id="lgA" x1="0" y1="0" x2="64" y2="64"><stop stop-color="#c084fc"/><stop offset="1" stop-color="#6425c7"/></linearGradient></defs>
+            <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#lgA)"/>
+            <path d="M22 18h11a8 8 0 0 1 0 16h-11z M22 34h13a8 8 0 0 1 0 16H22z" stroke="white" stroke-width="4.5" stroke-linejoin="round" fill="none"/>
+            <path d="M44 14l-6 10h7l-6 10" stroke="#f0abfc" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        BOWOX <span>ADMIN</span>
+    </a>
+    <div class="pill"><span class="live-dot"></span>ADMIN PANEL</div>
+</div>
+</nav>
+
+<!-- LOGIN -->
+<div class="container" id="loginView">
+    <div style="min-height:70vh;display:flex;align-items:center;justify-content:center">
+        <div class="panel glass" style="width:min(400px,100%)">
+            <div style="text-align:center">
+                <svg width="70" height="70" viewBox="0 0 64 64" fill="none" style="margin-bottom:16px;filter:drop-shadow(0 0 20px rgba(155,92,255,.5))">
+                    <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#lgA)"/>
+                    <path d="M22 18h11a8 8 0 0 1 0 16h-11z M22 34h13a8 8 0 0 1 0 16H22z" stroke="white" stroke-width="4.5" stroke-linejoin="round" fill="none"/>
+                    <path d="M44 14l-6 10h7l-6 10" stroke="#f0abfc" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                </svg>
+                <h1 style="font-size:22px">Admin <span class="gradient">BOWOX STORE</span></h1>
+                <p class="sub">Masuk dengan akun admin, atau buat akun admin baru.</p>
+            </div>
+
+            <div class="authtabs">
+                <button class="authtab active" id="authTabLogin" onclick="switchAuthTab('login')">MASUK</button>
+                <button class="authtab" id="authTabRegister" onclick="switchAuthTab('register')">BUAT AKUN</button>
+            </div>
+
+            <!-- FORM MASUK -->
+            <div id="loginForm">
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" id="loginUsername" placeholder="username admin">
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter')login()">
+                </div>
+                <button class="btn" style="width:100%;padding:13px" onclick="login()">MASUK</button>
+                <span class="linkish" onclick="openModal('forgotModal')">Lupa password?</span>
+            </div>
+
+            <!-- FORM BUAT AKUN -->
+            <div id="registerForm" style="display:none">
+                <div class="field">
+                    <label>Username Baru</label>
+                    <input type="text" id="regUsername" placeholder="buat username admin">
+                </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" placeholder="untuk reset password nanti">
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="regPassword" placeholder="minimal 6 karakter">
+                </div>
+                <div class="field">
+                    <label>Ulangi Password</label>
+                    <input type="password" id="regPassword2" placeholder="ulangi password" onkeydown="if(event.key==='Enter')registerAdmin()">
+                </div>
+                <button class="btn" style="width:100%;padding:13px" onclick="registerAdmin()">BUAT AKUN ADMIN</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="container" id="dashView" style="display:none">
+    <div class="hero-pad">
+        <div class="eyebrow">DASHBOARD</div>
+        <h1>Halo, <span class="gradient" id="adminNameTag">Admin</span></h1>
+        <p class="sub">ACC order pembeli, cek bukti transfer, kirim link join, dan kelola isi saldo — semua dari sini.</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat glass"><div class="stat-number" id="stOrders">0</div><div class="stat-label">Total Order</div></div>
+        <div class="stat glass"><div class="stat-number" style="color:#fde68a" id="stPending">0</div><div class="stat-label">Menunggu ACC</div></div>
+        <div class="stat glass"><div class="stat-number" style="color:#a7f3d0" id="stAcc">0</div><div class="stat-label">Sudah ACC</div></div>
+        <div class="stat glass"><div class="stat-number" style="color:#c084fc" id="stTopup">0</div><div class="stat-label">Isi Saldo Pending</div></div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" id="tabOrders" onclick="switchTab('orders')">📦 ORDER PEMBELI</button>
+        <button class="tab" id="tabTopups" onclick="switchTab('topups')">💰 ISI SALDO</button>
+        <button class="tab" id="tabAkun" onclick="switchTab('akun')">🔐 AKUN SAYA</button>
+        <button class="tab" onclick="renderAll()">↻ REFRESH</button>
+        <button class="tab" onclick="logout()">KELUAR</button>
+    </div>
+
+    <div class="panel glass" id="ordersPanel">
+        <div class="panel-title">Order Pembeli <span class="badge wait" id="orderCount">0</span></div>
+        <div id="adminOrderList"></div>
+    </div>
+
+    <div class="panel glass" id="topupsPanel" style="display:none">
+        <div class="panel-title">Permintaan Isi Saldo <span class="badge wait" id="topupCount">0</span></div>
+        <div id="adminTopupList"></div>
+    </div>
+
+    <div class="panel glass" id="akunPanel" style="display:none">
+        <div class="panel-title">Pengaturan Akun</div>
+        <div class="field">
+            <label>Username</label>
+            <input type="text" id="accUsername" disabled>
+        </div>
+        <div class="field">
+            <label>Email (dipakai untuk lupa password)</label>
+            <input type="email" id="accEmail" placeholder="masukkan email">
+        </div>
+        <div class="field">
+            <label>Password Baru (kosongkan jika tidak diganti)</label>
+            <input type="password" id="accNewPassword" placeholder="minimal 6 karakter">
+        </div>
+        <div class="field">
+            <label>Ulangi Password Baru</label>
+            <input type="password" id="accNewPassword2" placeholder="ulangi password baru">
+        </div>
+        <button class="btn" onclick="updateOwnAccount()">SIMPAN PERUBAHAN</button>
+    </div>
+</div>
+
+<footer>© 2026 BOWOX STORE • Admin Panel • All Rights Reserved</footer>
+<div id="toast"></div>
+
+<!-- MODAL LINK JOIN -->
+<div class="modal-bg" id="linkModal">
+    <div class="modal">
+        <h3>Kirim Link Join</h3>
+        <p id="linkModalInfo"></p>
+        <div class="field">
+            <label>Link Join / Invite</label>
+            <input type="text" id="joinLinkInput" placeholder="https://t.me/+xxxx atau link lain">
+        </div>
+        <button class="btn green" onclick="saveLink()">KIRIM LINK KE PEMBELI</button>
+        <span class="linkish" onclick="closeModal('linkModal')">Batal</span>
+    </div>
+</div>
+
+<!-- MODAL BUKTI -->
+<div class="modal-bg" id="proofViewModal">
+    <div class="modal">
+        <h3>Bukti Transfer</h3>
+        <img id="proofViewImg" src="" alt="Bukti transfer">
+        <button class="btn green" onclick="closeModal('proofViewModal')">TUTUP</button>
+    </div>
+</div>
+
+<!-- MODAL LUPA PASSWORD -->
+<div class="modal-bg" id="forgotModal">
+    <div class="modal">
+        <h3>Lupa Password</h3>
+        <p>Masukkan username dan email yang terdaftar saat buat akun untuk verifikasi, lalu buat password baru.</p>
+        <div class="field">
+            <label>Username</label>
+            <input type="text" id="fpUsername" placeholder="username admin">
+        </div>
+        <div class="field">
+            <label>Email Terdaftar</label>
+            <input type="email" id="fpEmail" placeholder="email saat buat akun">
+        </div>
+        <div class="field">
+            <label>Password Baru</label>
+            <input type="password" id="fpNewPassword" placeholder="minimal 6 karakter">
+        </div>
+        <div class="field">
+            <label>Ulangi Password Baru</label>
+            <input type="password" id="fpNewPassword2" placeholder="ulangi password baru" onkeydown="if(event.key==='Enter')resetPassword()">
+        </div>
+        <button class="btn green" onclick="resetPassword()">SIMPAN PASSWORD BARU</button>
+        <span class="linkish" onclick="closeModal('forgotModal')">Batal</span>
+    </div>
+</div>
+
+<script>
+/* ================= CONFIG ================= */
+const DB_KEY = "bowox_db_v1";
+const AUTH_KEY = "bowox_admin_auth";
+const ADMIN_DB_KEY = "bowox_admin_accounts";
+
+function loadDB(){ try{ return JSON.parse(localStorage.getItem(DB_KEY)) || {orders:[],topups:[],saldo:{},seq:1}; } catch(e){ return {orders:[],topups:[],saldo:{},seq:1}; } }
+function saveDB(db){ localStorage.setItem(DB_KEY, JSON.stringify(db)); }
+function esc(v){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+function rp(n){return "Rp " + Number(n||0).toLocaleString("id-ID");}
+function showToast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),2300);}
+function openModal(id){document.getElementById(id).classList.add("show");}
+function closeModal(id){document.getElementById(id).classList.remove("show");}
+
+/* ================= AKUN ADMIN ================= */
+function loadAdmins(){
+    let d;
+    try{ d = JSON.parse(localStorage.getItem(ADMIN_DB_KEY)); }catch(e){ d = null; }
+    if(!Array.isArray(d) || !d.length){
+        d = [{username:"bowox", password:"bowox2024", email:""}]; // akun admin default
+        localStorage.setItem(ADMIN_DB_KEY, JSON.stringify(d));
+    }
+    return d;
+}
+function saveAdmins(d){ localStorage.setItem(ADMIN_DB_KEY, JSON.stringify(d)); }
+loadAdmins(); // pastikan akun default "bowox" langsung tersedia
+
+function switchAuthTab(t){
+    document.getElementById("authTabLogin").classList.toggle("active", t==="login");
+    document.getElementById("authTabRegister").classList.toggle("active", t==="register");
+    document.getElementById("loginForm").style.display = t==="login" ? "block" : "none";
+    document.getElementById("registerForm").style.display = t==="register" ? "block" : "none";
+}
+
+/* ================= AUTH ================= */
+function login(){
+    const u = document.getElementById("loginUsername").value.trim();
+    const p = document.getElementById("loginPassword").value;
+    if(!u || !p){ showToast("Isi username dan password"); return; }
+    const found = loadAdmins().find(a => a.username.toLowerCase()===u.toLowerCase() && a.password===p);
+    if(found){
+        localStorage.setItem(AUTH_KEY, found.username);
+        document.getElementById("loginView").style.display="none";
+        document.getElementById("dashView").style.display="block";
+        document.getElementById("adminNameTag").textContent = found.username;
+        renderAll();
+        showToast("Selamat datang, " + found.username + "!");
+    } else { showToast("Username atau password salah"); }
+}
+function registerAdmin(){
+    const u = document.getElementById("regUsername").value.trim();
+    const email = document.getElementById("regEmail").value.trim();
+    const p = document.getElementById("regPassword").value;
+    const p2 = document.getElementById("regPassword2").value;
+    if(u.length < 3){ showToast("Username minimal 3 karakter"); return; }
+    if(!email || !email.includes("@") || !email.includes(".")){ showToast("Masukkan email yang valid"); return; }
+    if(p.length < 6){ showToast("Password minimal 6 karakter"); return; }
+    if(p !== p2){ showToast("Ulangi password tidak sama"); return; }
+    const admins = loadAdmins();
+    if(admins.some(a => a.username.toLowerCase()===u.toLowerCase())){ showToast("Username sudah dipakai, pilih username lain"); return; }
+    admins.push({username:u, password:p, email});
+    saveAdmins(admins);
+    showToast("Akun admin dibuat! Silakan masuk.");
+    document.getElementById("regUsername").value="";
+    document.getElementById("regEmail").value="";
+    document.getElementById("regPassword").value="";
+    document.getElementById("regPassword2").value="";
+    switchAuthTab("login");
+    document.getElementById("loginUsername").value = u;
+    document.getElementById("loginPassword").focus();
+}
+function resetPassword(){
+    const u = document.getElementById("fpUsername").value.trim();
+    const email = document.getElementById("fpEmail").value.trim();
+    const p = document.getElementById("fpNewPassword").value;
+    const p2 = document.getElementById("fpNewPassword2").value;
+    if(!u || !email){ showToast("Isi username dan email"); return; }
+    if(p.length < 6){ showToast("Password baru minimal 6 karakter"); return; }
+    if(p !== p2){ showToast("Ulangi password baru tidak sama"); return; }
+    const admins = loadAdmins();
+    const found = admins.find(a => a.username.toLowerCase()===u.toLowerCase() && a.email.toLowerCase()===email.toLowerCase() && email);
+    if(!found){ showToast("Username & email tidak cocok dengan data akun"); return; }
+    found.password = p;
+    saveAdmins(admins);
+    closeModal("forgotModal");
+    showToast("Password berhasil diubah, silakan masuk dengan password baru.");
+    document.getElementById("fpUsername").value="";
+    document.getElementById("fpEmail").value="";
+    document.getElementById("fpNewPassword").value="";
+    document.getElementById("fpNewPassword2").value="";
+}
+function logout(){ localStorage.removeItem(AUTH_KEY); location.reload(); }
+if(localStorage.getItem(AUTH_KEY)){
+    document.getElementById("loginView").style.display="none";
+    document.getElementById("dashView").style.display="block";
+    document.getElementById("adminNameTag").textContent = localStorage.getItem(AUTH_KEY);
+}
+
+/* ================= TABS ================= */
+function switchTab(t){
+    document.getElementById("tabOrders").classList.toggle("active", t==="orders");
+    document.getElementById("tabTopups").classList.toggle("active", t==="topups");
+    document.getElementById("tabAkun").classList.toggle("active", t==="akun");
+    document.getElementById("ordersPanel").style.display = t==="orders"?"block":"none";
+    document.getElementById("topupsPanel").style.display = t==="topups"?"block":"none";
+    document.getElementById("akunPanel").style.display = t==="akun"?"block":"none";
+    if(t==="akun") fillAccountForm();
+}
+function fillAccountForm(){
+    const me = localStorage.getItem(AUTH_KEY);
+    const found = loadAdmins().find(a=>a.username===me);
+    document.getElementById("accUsername").value = me || "";
+    document.getElementById("accEmail").value = (found && found.email) || "";
+    document.getElementById("accNewPassword").value = "";
+    document.getElementById("accNewPassword2").value = "";
+}
+function updateOwnAccount(){
+    const me = localStorage.getItem(AUTH_KEY);
+    const admins = loadAdmins();
+    const found = admins.find(a=>a.username===me);
+    if(!found){ showToast("Akun tidak ditemukan"); return; }
+    const email = document.getElementById("accEmail").value.trim();
+    const p = document.getElementById("accNewPassword").value;
+    const p2 = document.getElementById("accNewPassword2").value;
+    if(email && (!email.includes("@") || !email.includes("."))){ showToast("Email tidak valid"); return; }
+    if(p || p2){
+        if(p.length < 6){ showToast("Password baru minimal 6 karakter"); return; }
+        if(p !== p2){ showToast("Ulangi password baru tidak sama"); return; }
+        found.password = p;
+    }
+    found.email = email;
+    saveAdmins(admins);
+    showToast("Akun berhasil diperbarui");
+    document.getElementById("accNewPassword").value = "";
+    document.getElementById("accNewPassword2").value = "";
+}
+
+/* ================= STATUS ================= */
+function statusBadge(s){
+    if(s==="ACC"||s==="SELESAI") return '<span class="badge acc">✓ DI-ACC</span>';
+    if(s==="DITOLAK") return '<span class="badge tolak">DITOLAK</span>';
+    return '<span class="badge wait">MENUNGGU ACC</span>';
+}
+
+/* ================= ORDERS ================= */
+function accOrder(id){
+    const db = loadDB();
+    const o = db.orders.find(x=>x.id===id);
+    if(!o) return;
+    o.status = "ACC";
+    saveDB(db); renderAll();
+    showToast(id + " di-ACC. Pembeli bisa kirim bukti transfer.");
+}
+function tolakOrder(id){
+    if(!confirm("Tolak order " + id + "?")) return;
+    const db = loadDB();
+    const o = db.orders.find(x=>x.id===id);
+    if(!o) return;
+    o.status = "DITOLAK";
+    saveDB(db); renderAll();
+}
+let linkTargetId = null;
+function openLinkModal(id){
+    linkTargetId = id;
+    const db = loadDB();
+    const o = db.orders.find(x=>x.id===id);
+    document.getElementById("linkModalInfo").innerHTML =
+        "Order <b style='color:#e9d5ff'>"+esc(o.id)+"</b> • @"+esc(o.user)+"<br>"+esc(o.service)+" — "+esc(o.pkg);
+    document.getElementById("joinLinkInput").value = o.link || "";
+    openModal("linkModal");
+}
+function saveLink(){
+    const v = document.getElementById("joinLinkInput").value.trim();
+    if(!v){ showToast("Isi link dulu"); return; }
+    const db = loadDB();
+    const o = db.orders.find(x=>x.id===linkTargetId);
+    if(o){ o.link = v; o.status = "SELESAI"; saveDB(db); }
+    closeModal("linkModal"); renderAll();
+    showToast("Link join terkirim ke pembeli!");
+}
+function viewProof(dataUrl){
+    document.getElementById("proofViewImg").src = dataUrl;
+    openModal("proofViewModal");
+}
+
+/* ================= TOPUPS ================= */
+function accTopup(id){
+    const db = loadDB();
+    const t = db.topups.find(x=>x.id===id);
+    if(!t) return;
+    t.status = "ACC";
+    db.saldo[t.user] = (db.saldo[t.user]||0) + t.amount;
+    saveDB(db); renderAll();
+    showToast("Saldo @" + t.user + " +" + rp(t.amount));
+}
+function tolakTopup(id){
+    if(!confirm("Tolak isi saldo " + id + "?")) return;
+    const db = loadDB();
+    const t = db.topups.find(x=>x.id===id);
+    if(!t) return;
+    t.status = "DITOLAK";
+    saveDB(db); renderAll();
+}
+
+/* ================= RENDER ================= */
+function renderAll(){
+    const db = loadDB();
+    document.getElementById("stOrders").textContent = db.orders.length;
+    document.getElementById("stPending").textContent = db.orders.filter(o=>o.status==="MENUNGGU_ACC").length;
+    document.getElementById("stAcc").textContent = db.orders.filter(o=>o.status==="ACC"||o.status==="SELESAI").length;
+    document.getElementById("stTopup").textContent = db.topups.filter(t=>t.status==="MENUNGGU_ACC").length;
+    document.getElementById("orderCount").textContent = db.orders.length;
+    document.getElementById("topupCount").textContent = db.topups.length;
+
+    const ol = document.getElementById("adminOrderList");
+    window._proofMap = {};
+    db.orders.forEach(o=>{ if(o.proof) window._proofMap[o.id]=o.proof; });
+    ol.innerHTML = db.orders.length ? db.orders.map(o=>`
+    <div class="order-item">
+        <div class="oi-main">
+            <b>@${esc(o.user)} — ${esc(o.service)} • ${esc(o.pkg)}</b>
+            <span>${o.id} • ${esc(o.price)} • ${esc(o.time)}${o.target?"<br>Target: "+esc(o.target):""}</span>
+            ${o.link?`<br><span style="color:#a7f3d0">Link: ${esc(o.link)}</span>`:""}
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            ${statusBadge(o.status)}
+            ${o.proof?`<button class="btn ghost" onclick="viewProof(window._proofMap['${o.id}'])">LIHAT BUKTI</button>`:""}
+            ${o.status==="MENUNGGU_ACC"?`<button class="btn green" onclick="accOrder('${o.id}')">ACC</button><button class="btn red" onclick="tolakOrder('${o.id}')">TOLAK</button>`:""}
+            ${o.status==="ACC"?`<button class="btn" onclick="openLinkModal('${o.id}')">KIRIM LINK JOIN</button>`:""}
+        </div>
+    </div>`).join("") : '<div class="empty">Belum ada order masuk.</div>';
+
+    const tl = document.getElementById("adminTopupList");
+    window._proofMapT = {};
+    db.topups.forEach(t=>{ if(t.proof) window._proofMapT[t.id]=t.proof; });
+    tl.innerHTML = db.topups.length ? db.topups.map(t=>`
+    <div class="order-item">
+        <div class="oi-main">
+            <b>@${esc(t.user)} — Isi Saldo ${rp(t.amount)}</b>
+            <span>${t.id} • ${esc(t.time)}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;flex-wrap:wrap">
+            ${statusBadge(t.status)}
+            ${t.proof?`<button class="btn ghost" onclick="viewProof(window._proofMapT['${t.id}'])">LIHAT BUKTI</button>`:""}
+            ${t.status==="MENUNGGU_ACC"?`<button class="btn green" onclick="accTopup('${t.id}')">ACC & TAMBAH SALDO</button><button class="btn red" onclick="tolakTopup('${t.id}')">TOLAK</button>`:""}
+        </div>
+    </div>`).join("") : '<div class="empty">Belum ada permintaan isi saldo.</div>';
+}
+
+renderAll();
+setInterval(renderAll, 5000); // auto-refresh tiap 5 detik
+</script>
+</body>
+</html>
